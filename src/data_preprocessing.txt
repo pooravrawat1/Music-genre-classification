@@ -1,0 +1,27 @@
+Documentation for data_preprocessing.py
+
+1. df (pandas DataFrame):
+   - A DataFrame is a 2-dimensional, tabular data structure in pandas, similar to a spreadsheet or SQL table, where data is organized in rows and columns. The variable name 'df' is commonly used to represent a DataFrame in pandas code.
+
+2. LabelEncoder:
+   - LabelEncoder is a class from sklearn.preprocessing used to convert categorical labels (such as strings or non-numeric values) into numeric values. It assigns each unique label an integer, making it easier to use categorical data in machine learning models. Example: genres like "rock", "jazz", "pop" become 0, 1, 2, etc.
+
+3. fit_transform:
+   - fit_transform is a method used in scikit-learn preprocessing classes (like LabelEncoder, StandardScaler, etc.). It does two things:
+     a: fit: Learns the parameters from the data (e.g., finds unique labels or computes mean and std).
+     b: transform: Applies the transformation to the data (e.g., encodes labels or scales features).
+   - fit_transform combines both steps: it learns from the data and then transforms it in one call.
+
+4. StandardScaler:
+   - StandardScaler is a class from sklearn.preprocessing that standardizes features by removing the mean and scaling to unit variance. It transforms your data so that each feature has a mean of 0 and a standard deviation of 1, which helps many machine learning algorithms perform better.
+
+5. train_test_split:
+   - train_test_split is a function from sklearn.model_selection that splits arrays or matrices into random train and test subsets. In this script, it splits the scaled features and encoded labels into training and testing sets.
+   - Parameters used:
+     * test_size=0.2: 20% of the data is used for testing, 80% for training.
+     * random_state=42: Ensures reproducibility by setting a random seed.
+     * stratify=y_encoded: Ensures the class distribution is preserved in both train and test sets.
+   - Returns: x_train, x_test, y_train, y_test for model training and evaluation.
+
+6. encoder.classes_:
+   - After fitting the LabelEncoder, encoder.classes_ gives the list of unique classes (labels) found in the data, in the order they are encoded.
