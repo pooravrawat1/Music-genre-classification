@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 
 # Paths
-DATASET_PATH = "data/raw/genres"
+DATASET_PATH = "data/raw/genres_original"
 OUTPUT_PATH = "data/processed"
 OUTPUT_FILE = os.path.join(OUTPUT_PATH, "features.csv")
 
