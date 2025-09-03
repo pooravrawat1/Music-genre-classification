@@ -8,6 +8,7 @@ DATASET_PATH = "data/raw/genres_original"
 OUTPUT_PATH = "data/processed"
 OUTPUT_FILE = os.path.join(OUTPUT_PATH, "features.csv")
 
+
 def extract_features(file_path, n_mfcc=20):
     """
     Extract MFCC features from an audio file.
@@ -21,6 +22,7 @@ def extract_features(file_path, n_mfcc=20):
     except Exception as e:
         print(f"Error processing {file_path}: {e}")
         return None
+
 
 def main():
     if not os.path.exists(OUTPUT_PATH):
