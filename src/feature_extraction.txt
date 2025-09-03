@@ -1,0 +1,37 @@
+Documentation for feature_extraction.py
+
+1. os:
+   - Python's built-in module for interacting with the operating system. Used here for file and directory operations (e.g., os.path, os.makedirs, os.listdir).
+
+2. librosa:
+   - A Python library for audio and music analysis. Used for loading audio files and extracting features like MFCCs (Mel-frequency cepstral coefficients).
+
+3. numpy (np):
+   - A library for numerical computations in Python. Used for array operations and calculating means of MFCC features.
+
+4. pandas (pd):
+   - A library for data manipulation and analysis. Used to create and save a DataFrame containing extracted features.
+
+5. DATASET_PATH, OUTPUT_PATH, OUTPUT_FILE:
+   - Strings specifying the locations of the input audio dataset, output directory, and output CSV file.
+
+6. extract_features(file_path, n_mfcc=20):
+   - Function that loads an audio file, extracts MFCC features, and returns the mean MFCC values as a feature vector. Handles errors gracefully and prints a message if extraction fails.
+
+7. main():
+   - Main function that:
+     * Creates the output directory if it doesn't exist.
+     * Iterates through each genre folder and each .wav file.
+     * Extracts features and stores them in a list.
+     * Creates a DataFrame with the features and genre labels.
+     * Saves the DataFrame to a CSV file.
+     * Prints status messages and the shape of the final dataset.
+
+8. MFCC (Mel-frequency cepstral coefficients):
+   - Audio features commonly used in music and speech analysis. Represent the short-term power spectrum of sound and are useful for genre classification.
+
+9. Error Handling:
+   - The script prints an error message and skips files that cannot be processed (e.g., corrupted or unreadable audio files).
+
+10. __name__ == "__main__":
+    - Ensures the main() function runs only when the script is executed directly, not when imported as a module.
