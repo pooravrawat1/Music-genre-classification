@@ -57,7 +57,7 @@ else:
     y_train_encoded = encoder.fit_transform(y_train)  # Fit and transform labels
     joblib.dump(encoder, ENCODER_PATH)  # Save encoder
     scaler = StandardScaler()  # Initialize scaler
-    X_train_scaled = scaler.fit_transform(X_train)  # Fit and transform features
+    x_train_scaled = scaler.fit_transform(x_train)  # Fit and transform features
     joblib.dump(scaler, SCALER_PATH)  # Save scaler
     print(f"Encoder and Scaler saved for inference at {ENCODER_PATH} and {SCALER_PATH}")
 
