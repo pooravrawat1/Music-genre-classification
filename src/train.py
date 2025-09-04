@@ -1,5 +1,6 @@
 # Import necessary libraries
 import pandas as pd
+from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier  # Random Forest model
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix  # Evaluation metrics
 from sklearn.preprocessing import StandardScaler, LabelEncoder  # Preprocessing tools
@@ -24,8 +25,32 @@ y_train = pd.read_csv(os.path.join(DATA_PATH, "y_train.csv")).squeeze() # Squeez
 y_test = pd.read_csv(os.path.join(DATA_PATH, "y_test.csv")).squeeze()
 
 # Initialize and train the Random Forest classifier
-model = RandomForestClassifier(n_estimators=200, random_state=42, n_jobs=-1)
-model.fit(x_train, y_train)
+# Define parameter grid for tuning
+param_grid = {
+    "n_estimators": [100, 200, 500],
+    "max_depth": [None, 10, 20, 30],
+    "min_samples_split": [2, 5, 10],
+    "min_samples_leaf": [1, 2, 4],
+    "max_features": ["sqrt", "log2"]
+}
+
+# Grid search with 5-fold cross-validation
+grid_search = GridSearchCV(
+    estimator=RandomForestClassifier(random_state=42, n_jobs=-1),
+    param_grid=param_grid,
+    cv=5,
+    scoring="accuracy",
+    verbose=2,
+    n_jobs=-1
+)
+
+print("🔍 Running hyperparameter tuning...")
+grid_search.fit(x_train, y_train)
+
+# Extract the best model
+model = grid_search.best_estimator_
+print("✅ Best Parameters:", grid_search.best_params_)
+print("✅ Best CV Accuracy:", grid_search.best_score_)
 
 # Predict on test data and evaluate accuracy
 y_pred = model.predict(x_test)
