@@ -38,7 +38,7 @@ print(classification_report(y_test, y_pred))
 
 # Compute and plot confusion matrix
 cm = confusion_matrix(y_test, y_pred)
-plt.figure(figsize =(10, 7))  # Typo: should be plt.figure
+plt.figure(figsize =(10, 7))
 sns.heatmap(cm, annot = True, fmt ="d", cmap = "Blues")
 plt.title("Confusion Matrix")
 plt.xlabel("Predicted")
@@ -60,5 +60,3 @@ else:
     x_train_scaled = scaler.fit_transform(x_train)  # Fit and transform features
     joblib.dump(scaler, SCALER_PATH)  # Save scaler
     print(f"Encoder and Scaler saved for inference at {ENCODER_PATH} and {SCALER_PATH}")
-
-
