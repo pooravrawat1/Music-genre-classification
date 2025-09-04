@@ -1,0 +1,32 @@
+Documentation for train.py
+
+1. pandas (pd):
+   - Library for data manipulation and analysis. Used to read training and test datasets from CSV files.
+
+2. sklearn.ensemble.RandomForestClassifier:
+   - Machine learning model for classification tasks. Uses multiple decision trees to improve accuracy and reduce overfitting.
+
+3. sklearn.metrics (accuracy_score, classification_report, confusion_matrix):
+   - Functions to evaluate model performance. accuracy_score gives the overall accuracy, classification_report provides precision, recall, and f1-score, and confusion_matrix shows prediction errors for each class.
+
+4. sklearn.preprocessing (StandardScaler, LabelEncoder):
+   - StandardScaler standardizes features (mean=0, std=1). LabelEncoder converts categorical labels to numeric values.
+
+5. joblib:
+   - Library for saving and loading Python objects efficiently. Used to save the trained model to disk.
+
+6. os:
+   - Python's built-in module for interacting with the operating system. Used for file path operations and creating directories.
+
+7. matplotlib.pyplot (plt):
+   - Library for creating visualizations. Used to plot the confusion matrix.
+
+8. seaborn (sns):
+   - Data visualization library based on matplotlib. Used to create a heatmap for the confusion matrix.
+
+How train.py works:
+- Reads preprocessed training and test data from CSV files.
+- Initializes and trains a RandomForestClassifier on the training data.
+- Predicts labels for the test data and evaluates accuracy and other metrics.
+- Plots a confusion matrix to visualize prediction results.
+- Saves the trained model to the 'models' directory using joblib.
