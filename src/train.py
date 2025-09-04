@@ -20,7 +20,7 @@ os.makedirs("models", exist_ok=True)
 # Load training and test data from CSV files
 x_train = pd.read_csv(os.path.join(DATA_PATH, "x_train.csv"))
 x_test = pd.read_csv(os.path.join(DATA_PATH, "x_test.csv"))
-y_train = pd.read_csv(os.path.join(DATA_PATH, "y_train.csv")).squeeze  # Squeeze to convert to Series
+y_train = pd.read_csv(os.path.join(DATA_PATH, "y_train.csv")).squeeze() # Squeeze to convert to Series
 y_test = pd.read_csv(os.path.join(DATA_PATH, "y_test.csv")).squeeze()
 
 # Initialize and train the Random Forest classifier
@@ -38,7 +38,7 @@ print(classification_report(y_test, y_pred))
 
 # Compute and plot confusion matrix
 cm = confusion_matrix(y_test, y_pred)
-plt.figutr(figsize =(10, 7))  # Typo: should be plt.figure
+plt.figure(figsize =(10, 7))  # Typo: should be plt.figure
 sns.heatmap(cm, annot = True, fmt ="d", cmap = "Blues")
 plt.title("Confusion Matrix")
 plt.xlabel("Predicted")
@@ -50,7 +50,7 @@ joblib.dump(model, MODEL_PATH)
 print(f"Model saved at {MODEL_PATH}")
 
 # Save encoder and scaler if they don't already exist
-if ENCODER_PATH.exists() or SCALER_PATH.exists():
+if os.path.exists(ENCODER_PATH) or os.path.exists(SCALER_PATH):
     print("Encoder/Scaler already exist, skipping save")
 else:
     encoder = LabelEncoder()  # Initialize label encoder
