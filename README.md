@@ -25,4 +25,11 @@ To classify music tracks into genres, we extract MFCC (Mel-Frequency Cepstral Co
 - Provide a robust input for machine learning models like Random Forests.
 
 ## Outcome:
+
+## Model Comparison: Random Forest vs KNN
+
+We compared Random Forest and K-Nearest Neighbors (KNN) classifiers for music genre classification. Random Forest achieved higher accuracy (0.64) compared to KNN (0.54). This improvement is likely due to Random Forest's ability to handle high-dimensional audio features more effectively than KNN.
+
+Random Forest was therefore selected as the primary model for this project.
+
 The resulting CSV (data/processed/features.csv) contains one row per track with 20 MFCC features plus the genre label, ready for training and evaluation.
