@@ -2,7 +2,8 @@
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier  # Random Forest model
-from sklearn.neighbors import KNeighborsClassifier  # KNN model
+from sklearn.neighbors import KNeighborsClassifier  # KNN 
+from xgboost import XGBClassifier # XGBoost model
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix  # Evaluation metrics
 from sklearn.preprocessing import StandardScaler, LabelEncoder  # Preprocessing tools
 import joblib  # For saving/loading models
@@ -15,6 +16,7 @@ DATA_PATH = "data/processed"
 MODEL_PATH = "models/random_forest.pkl"
 ENCODER_PATH = "models/label_encoder.pkl"
 SCALER_PATH = "models/scaler.pkl"
+XGB_MODEL_PATH = "models/xgboost.pkl"
 
 # Create models directory if it doesn't exist
 os.makedirs("models", exist_ok=True)
@@ -131,6 +133,56 @@ plt.show()
 joblib.dump(knn_model, KNN_MODEL_PATH)
 print(f"👥 KNN model saved at {KNN_MODEL_PATH}")
 
+xgb_param_grid = {
+    "n_estimators": [100, 200],
+    "max_depth": [3, 6, 10],
+    "learning_rate": [0.01, 0.1, 0.2],
+    "subsample": [0.8, 1.0],
+    "colsample_bytree": [0.8, 1.0]
+}
+
+xgb_grid = GridSearchCV(
+    estimator=XGBClassifier(
+        objective="multi:softmax",  # multi-class classification
+        num_class=len(y_train.unique()),  # number of genres
+        use_label_encoder=False,
+        eval_metric="mlogloss",
+        random_state=42,
+        n_jobs=-1
+    ),
+    param_grid=xgb_param_grid,
+    cv=5,
+    scoring="accuracy",
+    verbose=2,
+    n_jobs=-1
+)
+
+print("🔍 Running hyperparameter tuning for XGBoost...")
+xgb_grid.fit(x_train, y_train)
+
+xgb_model = xgb_grid.best_estimator_
+print("✅ Best XGBoost Parameters:", xgb_grid.best_params_)
+print("✅ Best CV Accuracy (XGBoost):", xgb_grid.best_score_)
+
+# Evaluate on test set
+y_pred_xgb = xgb_model.predict(x_test)
+accuracy_xgb = accuracy_score(y_test, y_pred_xgb)
+print(f"🔥 XGBoost Test Accuracy: {accuracy_xgb:.4f}\n")
+print("Classification Report (XGBoost):")
+print(classification_report(y_test, y_pred_xgb))
+
+# Compute and plot confusion matrix for XGBoost
+cm_xgb = confusion_matrix(y_test, y_pred_xgb)
+plt.figure(figsize=(10, 7))
+sns.heatmap(cm_xgb, annot=True, fmt="d", cmap="Oranges")
+plt.title("Confusion Matrix (XGBoost)")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
+
+# Save the trained XGBoost model
+joblib.dump(xgb_model, XGB_MODEL_PATH)
+print(f"🔥 XGBoost model saved at {XGB_MODEL_PATH}")
 
 # Save encoder and scaler if they don't already exist
 if os.path.exists(ENCODER_PATH) or os.path.exists(SCALER_PATH):
