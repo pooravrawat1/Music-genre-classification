@@ -2,6 +2,7 @@
 import pandas as pd
 from sklearn.model_selection import GridSearchCV
 from sklearn.ensemble import RandomForestClassifier  # Random Forest model
+from sklearn.neighbors import KNeighborsClassifier  # KNN model
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix  # Evaluation metrics
 from sklearn.preprocessing import StandardScaler, LabelEncoder  # Preprocessing tools
 import joblib  # For saving/loading models
@@ -73,6 +74,63 @@ plt.show()
 # Save the trained model to disk
 joblib.dump(model, MODEL_PATH)
 print(f"Model saved at {MODEL_PATH}")
+
+plt.show()
+
+# ----------------------------
+# KNN Training + Grid Search
+# ----------------------------
+from sklearn.model_selection import StratifiedKFold
+
+KNN_MODEL_PATH = "models/knn.pkl"  # new save path for KNN
+
+knn_param_grid = {
+    "n_neighbors": [3, 5, 7, 9, 11],
+    "weights": ["uniform", "distance"],
+    "metric": ["euclidean", "manhattan", "minkowski"]
+}
+
+knn_grid = GridSearchCV(
+    estimator=KNeighborsClassifier(),
+    param_grid=knn_param_grid,
+    cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=42),
+    scoring="accuracy",
+    verbose=2,
+    n_jobs=-1
+)
+
+print("🔍 Running hyperparameter tuning for KNN...")
+# IMPORTANT: use scaled data for KNN
+scaler = StandardScaler()
+x_train_scaled = scaler.fit_transform(x_train)
+x_test_scaled = scaler.transform(x_test)
+
+knn_grid.fit(x_train_scaled, y_train)
+
+knn_model = knn_grid.best_estimator_
+print("✅ Best KNN Parameters:", knn_grid.best_params_)
+print("✅ Best CV Accuracy (KNN):", knn_grid.best_score_)
+
+# Evaluate on test set
+y_pred_knn = knn_model.predict(x_test_scaled)
+accuracy_knn = accuracy_score(y_test, y_pred_knn)
+print(f"👥 KNN Test Accuracy: {accuracy_knn:.4f}\n")
+print("Classification Report (KNN):")
+print(classification_report(y_test, y_pred_knn))
+
+# Compute and plot confusion matrix for KNN
+cm_knn = confusion_matrix(y_test, y_pred_knn)
+plt.figure(figsize=(10, 7))
+sns.heatmap(cm_knn, annot=True, fmt="d", cmap="Greens")
+plt.title("Confusion Matrix (KNN)")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
+
+# Save the trained KNN model to disk
+joblib.dump(knn_model, KNN_MODEL_PATH)
+print(f"👥 KNN model saved at {KNN_MODEL_PATH}")
+
 
 # Save encoder and scaler if they don't already exist
 if os.path.exists(ENCODER_PATH) or os.path.exists(SCALER_PATH):
