@@ -22,6 +22,6 @@ if __name__ == "__main__":
     num_classes = len(y_train.unique())
 
     # Uncomment the one you want to train
-    # train_random_forest(x_train, y_train, x_test, y_test)
+    train_random_forest(x_train, y_train, x_test, y_test)
     # train_knn(x_train, y_train, x_test, y_test)
-    train_neural_net(x_train, y_train, x_test, y_test, num_classes)
+    # train_neural_net(x_train, y_train, x_test, y_test, num_classes)
