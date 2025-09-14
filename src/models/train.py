@@ -4,9 +4,9 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
 
 # Import our models
-from models.random_forest_model import train_random_forest
-from models.neural_net_model import train_neural_net
-from models.knn_model import train_knn
+from src.models.random_forest_model import train_random_forest
+from src.models.neural_net_model import train_neural_net
+from src.models.knn_model import train_knn
 
 DATA_PATH = "data/processed"
 
