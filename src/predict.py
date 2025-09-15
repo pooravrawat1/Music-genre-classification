@@ -26,7 +26,7 @@ transform = transforms.Compose([
     transforms.Normalize((0.5,), (0.5,)) # normalize
 ])
 
-def predict(image_path, model_path="model.pth"):
+def predict(image_path, model_path="models/random_forest.pkl"):
     # Load the model
     model = SimpleNN()
     model.load_state_dict(torch.load(model_path))
