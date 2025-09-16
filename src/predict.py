@@ -32,9 +32,19 @@ X_new = pd.read_csv(args.input)
 # Ensure columns match training (drop names, keep only values)
 X_new = X_new.values
 
+
 # --- Make Predictions ---
 predictions = model.predict(X_new)
 
-print("✅ Predictions:")
-for i, pred in enumerate(predictions, 1):
-    print(f"Sample {i}: {pred}")
+# Load the label encoder
+encoder_path = "models/label_encoder.pkl"
+if os.path.exists(encoder_path):
+    encoder = joblib.load(encoder_path)
+    predicted_labels = encoder.inverse_transform(predictions)
+    print("✅ Predictions:")
+    for i, label in enumerate(predicted_labels, 1):
+        print(f"Sample {i}: {label}")
+else:
+    print("✅ Predictions:")
+    for i, pred in enumerate(predictions, 1):
+        print(f"Sample {i}: {pred}")
