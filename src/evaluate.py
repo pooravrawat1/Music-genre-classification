@@ -48,3 +48,9 @@ print(classification_report(y_test, y_pred))
 print("\nConfusion Matrix:")
 print(confusion_matrix(y_test, y_pred))
 
+feature_names_path = "models/feature_names.pkl"
+if os.path.exists(feature_names_path):
+    train_features = joblib.load(feature_names_path)
+    X_test = df[train_features].values  # pick the same columns
+else:
+    X_test = df.drop(columns=["label"]).values

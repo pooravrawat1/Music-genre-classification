@@ -25,3 +25,7 @@ if __name__ == "__main__":
     train_random_forest(x_train, y_train, x_test, y_test)
     # train_knn(x_train, y_train, x_test, y_test)
     # train_neural_net(x_train, y_train, x_test, y_test, num_classes)
+    # Save features used in training
+    feature_names_path = "models/feature_names.pkl"
+    joblib.dump(X_train.columns.tolist(), feature_names_path)
+
