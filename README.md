@@ -3,6 +3,7 @@
 ## Feature Extraction with MFCCs
 
 To classify music tracks into genres, we extract MFCC (Mel-Frequency Cepstral Coefficients) from each audio file. MFCCs are a compact representation of an audio signal that approximates how humans perceive sound. They capture the timbre and tonal characteristics of music, which differ across genres.
+Used more features, counting upto 84
 
 ## How it works:
 
