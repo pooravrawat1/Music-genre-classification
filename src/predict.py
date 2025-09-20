@@ -14,20 +14,44 @@ args = parser.parse_args()
 
 # --- Load Audio & Extract Features ---
 def extract_features(file_path, sr=22050):
-    y, sr = librosa.load(file_path, sr=sr)
+    y, sr = librosa.load(file_path, sr=sr, duration=30)
+    features = []
 
-    # Example features (same as in feature_extraction.py)
-    mfcc = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
-    mfcc_mean = np.mean(mfcc, axis=1)
-    mfcc_std = np.std(mfcc, axis=1)
+    # MFCC
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+    features.extend(np.mean(mfccs.T, axis=0))
+    features.extend(np.std(mfccs.T, axis=0))
 
+    # Chroma
     chroma = librosa.feature.chroma_stft(y=y, sr=sr)
-    chroma_mean = np.mean(chroma, axis=1)
-    chroma_std = np.std(chroma, axis=1)
+    features.extend(np.mean(chroma.T, axis=0))
+    features.extend(np.std(chroma.T, axis=0))
 
-    # Flatten all features into one vector
-    features = np.hstack([mfcc_mean, mfcc_std, chroma_mean, chroma_std])
-    return features.reshape(1, -1)  # 2D for sklearn
+    # Spectral Contrast
+    spec_contrast = librosa.feature.spectral_contrast(y=y, sr=sr)
+    features.extend(np.mean(spec_contrast.T, axis=0))
+    features.extend(np.std(spec_contrast.T, axis=0))
+
+    # Tonnetz
+    tonnetz = librosa.feature.tonnetz(y=y, sr=sr)
+    features.extend(np.mean(tonnetz.T, axis=0))
+    features.extend(np.std(tonnetz.T, axis=0))
+
+    # Zero Crossing Rate
+    zcr = librosa.feature.zero_crossing_rate(y)
+    features.append(np.mean(zcr))
+    features.append(np.std(zcr))
+
+    # Centroid / Bandwidth / Rolloff
+    centroid = librosa.feature.spectral_centroid(y=y, sr=sr)
+    bandwidth = librosa.feature.spectral_bandwidth(y=y, sr=sr)
+    rolloff = librosa.feature.spectral_rolloff(y=y, sr=sr)
+
+    for feat in [centroid, bandwidth, rolloff]:
+        features.append(np.mean(feat))
+        features.append(np.std(feat))
+
+    return np.array(features).reshape(1, -1)
 
 print("🎵 Extracting features...")
 X_new = extract_features(args.audio)
