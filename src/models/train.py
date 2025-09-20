@@ -2,6 +2,7 @@ import pandas as pd
 import os
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.model_selection import train_test_split
+import joblib
 
 # Import our models
 from src.models.random_forest_model import train_random_forest
@@ -26,6 +27,3 @@ if __name__ == "__main__":
     # train_knn(x_train, y_train, x_test, y_test)
     # train_neural_net(x_train, y_train, x_test, y_test, num_classes)
     # Save features used in training
-    feature_names_path = "models/feature_names.pkl"
-    joblib.dump(X_train.columns.tolist(), feature_names_path)
-
