@@ -13,9 +13,6 @@ streamlit>=1.28.0
 plotly>=5.15.0
 flask>=2.3.0
 
-# YouTube integration
-yt-dlp>=2023.7.6
-
 # Optional: Neural network support
 tensorflow>=2.13.0
 
