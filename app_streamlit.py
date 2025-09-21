@@ -5,6 +5,7 @@ import librosa
 import pandas as pd
 import os
 import tempfile
+import yt_dlp
 
 # Basic page config
 st.set_page_config(
@@ -47,7 +48,81 @@ st.markdown("""
 
 # Header
 st.markdown('<h1 class="main-title">🎵 Music Genre Classifier</h1>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">Upload your music file to discover its genre</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Upload your music file or import from YouTube to discover its genre</p>', unsafe_allow_html=True)
+
+def display_results(prediction, probabilities):
+    """Display prediction results"""
+    # Genre names
+    genres = ['blues', 'classical', 'country', 'disco', 'hiphop', 
+             'jazz', 'metal', 'pop', 'reggae', 'rock']
+    
+    if probabilities is not None:
+        # Create results
+        results = pd.DataFrame({
+            'Genre': genres,
+            'Confidence': probabilities * 100
+        }).sort_values('Confidence', ascending=False)
+        
+        top_genre = results.iloc[0]['Genre']
+        top_confidence = results.iloc[0]['Confidence']
+        
+        # Display result
+        st.markdown(f"""
+        <div class="result-box">
+            <h3>🎵 Predicted Genre: {top_genre.upper()}</h3>
+            <p>Confidence: {top_confidence:.1f}%</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        # Show top 3
+        st.write("### Top 3 Predictions:")
+        for i, (_, row) in enumerate(results.head(3).iterrows()):
+            st.markdown(f"""
+            <div class="confidence-box">
+                {i+1}. {row['Genre'].title()}: {row['Confidence']:.1f}%
+            </div>
+            """, unsafe_allow_html=True)
+        
+        # Show all results
+        st.write("### All Results:")
+        st.dataframe(results.round(1), use_container_width=True)
+    
+    else:
+        st.markdown(f"""
+        <div class="result-box">
+            <h3>🎵 Predicted Genre: {prediction}</h3>
+            <p>Confidence scores not available</p>
+        </div>
+        """, unsafe_allow_html=True)
+
+def download_youtube_audio(url):
+    """Download audio from YouTube URL"""
+    try:
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'outtmpl': 'temp_audio.%(ext)s',
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'wav',
+                'preferredquality': '192',
+            }],
+            'quiet': True,
+            'no_warnings': True,
+        }
+        
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download=True)
+            title = info.get('title', 'Unknown')
+            
+        # Find the downloaded file
+        for file in os.listdir('.'):
+            if file.startswith('temp_audio') and file.endswith('.wav'):
+                return file, title
+        
+        return None, None
+    except Exception as e:
+        st.error(f"Error downloading from YouTube: {e}")
+        return None, None
 
 @st.cache_data
 def extract_features(file_path):
@@ -135,75 +210,84 @@ def predict_genre(audio_file, model):
         return None, None
 
 # Main content
-st.write("## Upload Audio File")
+st.write("## Choose Input Method")
+
+# Create tabs for different input methods
+tab1, tab2 = st.tabs(["📁 Upload File", "🎬 YouTube"])
 
 # Load model
 model = load_model()
 if model is None:
     st.stop()
 
-# File uploader
-uploaded_file = st.file_uploader(
-    "Choose an audio file",
-    type=['wav', 'mp3', 'm4a']
-)
-
-if uploaded_file:
-    # Show file info
-    st.write(f"**File:** {uploaded_file.name}")
-    st.write(f"**Size:** {uploaded_file.size / 1024:.1f} KB")
+with tab1:
+    st.write("### Upload Audio File")
+    uploaded_file = st.file_uploader(
+        "Choose an audio file",
+        type=['wav', 'mp3', 'm4a']
+    )
     
-    # Audio player
-    st.audio(uploaded_file)
-    
-    # Predict button
-    if st.button("🎯 Analyze Genre"):
-        with st.spinner("Analyzing..."):
-            prediction, probabilities = predict_genre(uploaded_file, model)
+    if uploaded_file:
+        # Show file info
+        st.write(f"**File:** {uploaded_file.name}")
+        st.write(f"**Size:** {uploaded_file.size / 1024:.1f} KB")
         
-        if prediction is not None:
-            # Genre names
-            genres = ['blues', 'classical', 'country', 'disco', 'hiphop', 
-                     'jazz', 'metal', 'pop', 'reggae', 'rock']
+        # Audio player
+        st.audio(uploaded_file)
+        
+        # Predict button
+        if st.button("🎯 Analyze Genre", key="upload"):
+            with st.spinner("Analyzing..."):
+                prediction, probabilities = predict_genre(uploaded_file, model)
             
-            if probabilities is not None:
-                # Create results
-                results = pd.DataFrame({
-                    'Genre': genres,
-                    'Confidence': probabilities * 100
-                }).sort_values('Confidence', ascending=False)
-                
-                top_genre = results.iloc[0]['Genre']
-                top_confidence = results.iloc[0]['Confidence']
-                
-                # Display result
-                st.markdown(f"""
-                <div class="result-box">
-                    <h3>🎵 Predicted Genre: {top_genre.upper()}</h3>
-                    <p>Confidence: {top_confidence:.1f}%</p>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                # Show top 3
-                st.write("### Top 3 Predictions:")
-                for i, (_, row) in enumerate(results.head(3).iterrows()):
-                    st.markdown(f"""
-                    <div class="confidence-box">
-                        {i+1}. {row['Genre'].title()}: {row['Confidence']:.1f}%
-                    </div>
-                    """, unsafe_allow_html=True)
-                
-                # Show all results
-                st.write("### All Results:")
-                st.dataframe(results.round(1), use_container_width=True)
+            if prediction is not None:
+                display_results(prediction, probabilities)
+
+with tab2:
+    st.write("### Import from YouTube")
+    st.info("📝 **Note:** You need to install yt-dlp and ffmpeg for this feature to work.")
+    
+    youtube_url = st.text_input(
+        "Enter YouTube URL:",
+        placeholder="https://www.youtube.com/watch?v=..."
+    )
+    
+    if youtube_url and st.button("🎬 Download & Analyze", key="youtube"):
+        if "youtube.com" in youtube_url or "youtu.be" in youtube_url:
+            with st.spinner("Downloading from YouTube..."):
+                audio_file, title = download_youtube_audio(youtube_url)
             
+            if audio_file and os.path.exists(audio_file):
+                st.success(f"Downloaded: {title}")
+                
+                # Show audio player
+                with open(audio_file, 'rb') as f:
+                    st.audio(f.read())
+                
+                with st.spinner("Analyzing..."):
+                    # Create a file-like object for the downloaded audio
+                    with open(audio_file, 'rb') as f:
+                        audio_bytes = f.read()
+                    
+                    # Create a temporary file object
+                    class AudioFile:
+                        def __init__(self, data):
+                            self.data = data
+                        def read(self):
+                            return self.data
+                    
+                    audio_obj = AudioFile(audio_bytes)
+                    prediction, probabilities = predict_genre(audio_obj, model)
+                
+                if prediction is not None:
+                    display_results(prediction, probabilities)
+                
+                # Cleanup
+                os.unlink(audio_file)
             else:
-                st.markdown(f"""
-                <div class="result-box">
-                    <h3>🎵 Predicted Genre: {prediction}</h3>
-                    <p>Confidence scores not available</p>
-                </div>
-                """, unsafe_allow_html=True)
+                st.error("Failed to download audio from YouTube")
+        else:
+            st.error("Please enter a valid YouTube URL")
 
 # Footer
 st.write("---")
