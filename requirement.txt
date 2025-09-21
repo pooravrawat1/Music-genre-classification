@@ -1,0 +1,28 @@
+# Core dependencies
+pandas>=1.5.0
+numpy>=1.21.0
+scikit-learn>=1.1.0
+librosa>=0.9.0
+joblib>=1.2.0
+
+# Audio processing
+soundfile>=0.12.0
+
+# Web application dependencies
+streamlit>=1.28.0
+plotly>=5.15.0
+flask>=2.3.0
+
+# Optional: Neural network support
+tensorflow>=2.13.0
+
+# Data visualization (for notebooks)
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Development dependencies
+jupyter>=1.0.0
+ipykernel>=6.0.0
+
+# Model enhancement
+xgboost>=1.7.0
