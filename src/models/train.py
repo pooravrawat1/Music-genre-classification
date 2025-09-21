@@ -1,29 +1,25 @@
 import pandas as pd
-import os
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
 import joblib
 
-# Import our models
-from src.models.random_forest_model import train_random_forest
-from src.models.neural_net_model import train_neural_net
-from src.models.knn_model import train_knn
+# Load data
+df = pd.read_csv("data/processed/features.csv")
+X = df.drop(columns=["label"])
+y = df["label"]
 
-DATA_PATH = "data/processed"
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
-def load_data():
-    x = pd.read_csv(os.path.join(DATA_PATH, "x_train.csv"))
-    x_test = pd.read_csv(os.path.join(DATA_PATH, "x_test.csv"))
-    y = pd.read_csv(os.path.join(DATA_PATH, "y_train.csv")).squeeze()
-    y_test = pd.read_csv(os.path.join(DATA_PATH, "y_test.csv")).squeeze()
-    return x, y, x_test, y_test
+# Train model
+model = RandomForestClassifier(n_estimators=200, random_state=42)
+model.fit(X_train, y_train)
 
-if __name__ == "__main__":
-    x_train, y_train, x_test, y_test = load_data()
-    num_classes = len(y_train.unique())
+# Evaluate
+y_pred = model.predict(X_test)
+print("Accuracy:", accuracy_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
 
-    # Uncomment the one you want to train
-    train_random_forest(x_train, y_train, x_test, y_test)
-    # train_knn(x_train, y_train, x_test, y_test)
-    # train_neural_net(x_train, y_train, x_test, y_test, num_classes)
-    # Save features used in training
+# Save model
+joblib.dump(model, "models/random_forest.pkl")
