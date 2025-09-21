@@ -13,8 +13,6 @@ streamlit>=1.28.0
 plotly>=5.15.0
 flask>=2.3.0
 
-...existing code...
-
 # Optional: Neural network support
 tensorflow>=2.13.0
 
