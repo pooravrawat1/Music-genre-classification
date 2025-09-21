@@ -13,7 +13,12 @@ y = df["label"]
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
 
 # Train model
-model = RandomForestClassifier(n_estimators=200, random_state=42)
+model = RandomForestClassifier(
+	n_estimators=200,
+	random_state=42,
+	min_samples_leaf=1,      # You can tune this value
+	max_features='sqrt'      # 'sqrt' is recommended for classification
+)
 model.fit(X_train, y_train)
 
 # Evaluate
