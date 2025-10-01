@@ -1,36 +1,26 @@
-# Music-genre-classification
 
-## Feature Extraction with MFCCs
+# Music Genre Classification
 
-To classify music tracks into genres, we extract MFCC (Mel-Frequency Cepstral Coefficients) from each audio file. MFCCs are a compact representation of an audio signal that approximates how humans perceive sound. They capture the timbre and tonal characteristics of music, which differ across genres.
-Used more features, counting upto 84
+This repository contains code and resources for classifying music tracks into genres using machine learning. The project includes feature extraction, model training, evaluation, and a web application for genre prediction.
 
-## How it works:
+## Repository Structure
 
-- Audio is divided into short frames (~20–40 ms).
+- `app/` - Web app backend code
+- `app_streamlit.py` - Main entry point for the Streamlit web app
+- `data/` - Contains raw and processed audio features and files
+- `models/` - Saved machine learning models and encoders
+- `notebooks/` - Jupyter notebooks for data exploration, feature extraction, and model training
+- `src/` - Source code for preprocessing, feature extraction, prediction, and model training
+- `requirements.txt` - Python dependencies
+- `WEB_APP_GUIDE.md` - Guide for running and using the web application
 
-- Each frame is transformed into a frequency spectrum.
+## Quick Overview
 
-- Frequencies are mapped to the Mel scale (perceptually relevant).
+- Audio features are extracted (MFCCs and more) from music files
+- Several machine learning models are trained and compared
+- The best-performing model is used for genre prediction
+- All main scripts and notebooks are organized by function
 
-- The spectrum is summarized into 13–20 coefficients per frame.
+## Need Help with the Web App?
 
-- For each track, we aggregate the coefficients (mean over time) to create a single feature vector.
-
-## Why MFCCs:
-
-- Capture tonal textures unique to each genre.
-
-- Reduce dimensionality compared to raw audio or spectrograms.
-
-- Provide a robust input for machine learning models like Random Forests.
-
-## Outcome:
-
-## Model Comparison: Random Forest vs KNN
-
-We compared Random Forest and K-Nearest Neighbors (KNN) classifiers for music genre classification. Random Forest achieved higher accuracy (0.64) compared to KNN (0.54). This improvement is likely due to Random Forest's ability to handle high-dimensional audio features more effectively than KNN.
-
-Random Forest was therefore selected as the primary model for this project.
-
-The resulting CSV (data/processed/features.csv) contains one row per track with 20 MFCC features plus the genre label, ready for training and evaluation.
+For instructions on running and using the web application, see [`WEB_APP_GUIDE.md`](WEB_APP_GUIDE.md). This guide covers installation, setup, and usage of the interactive genre classifier web app.
