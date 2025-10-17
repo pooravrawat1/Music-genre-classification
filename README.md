@@ -128,4 +128,3 @@ python src/predict_simple.py
 - For a user guide and troubleshooting, consult [WEB_APP_GUIDE.md](WEB_APP_GUIDE.md).
 
 Happy experimenting — upload a 30s clip and try it out!
-// ...existing code...
