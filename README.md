@@ -1,4 +1,3 @@
-// ...existing code...
 # Music Genre Classification
 
 A compact music-genre classification project that extracts audio features from songs, trains machine learning models, and provides tools and a Streamlit web app to predict genres for new audio files.
